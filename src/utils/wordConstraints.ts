@@ -1,6 +1,6 @@
 /**
- * Shared constraint checking utilities
- * Used by both index.ts (command-line) and React app
+ * Word constraint checking utilities
+ * Validates words against Wordle game constraints
  */
 
 export interface WordConstraints {
@@ -83,7 +83,3 @@ export function matchesAllConstraints(
 
   return true
 }
-
-
-
-

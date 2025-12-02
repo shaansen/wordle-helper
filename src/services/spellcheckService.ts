@@ -1,6 +1,6 @@
 /**
- * Spellcheck service that can be used by both index.ts and React app
- * Exports the main solving function from index.ts
+ * Spellcheck service for Wordle solver
+ * Handles dictionary initialization and word generation/filtering
  */
 
 import SpellChecker from 'hunspell-spellchecker'
@@ -71,18 +71,24 @@ export function generateWordCombinations({
 }
 
 /**
- * Main solving function - can be called from index.ts or exported for use elsewhere
+ * Main solving function
+ * Generates all possible 5-letter combinations and filters by constraints
+ * 
+ * @param constraints - Wordle game constraints (accepted/denied chars, positions)
+ * @param spellchecker - Optional spellchecker to validate words against dictionary
+ * @returns Array of valid words matching all constraints
  */
 export async function solveWordleWithConstraints(
   constraints: WordConstraints,
   spellchecker?: SpellChecker,
 ): Promise<string[]> {
+  // Get allowed characters (all letters except denied ones)
   const ALL_CHARS: string[] = 'abcdefghijklmnopqrstuvwxyz'.split('')
   const allowedChars = ALL_CHARS.filter(
     char => !constraints.deniedChars.includes(char),
   )
 
-  // Generate all possible combinations
+  // Generate all possible 5-letter combinations
   const allResults: string[] = []
   generateWordCombinations({
     index: 0,
@@ -92,22 +98,23 @@ export async function solveWordleWithConstraints(
     results: allResults,
   })
 
-  // Filter words that contain all required characters
+  // Apply constraint filters in sequence
+  // 1. Must contain all accepted characters
   const wordsWithAllCharacters = allResults.filter(word =>
     hasAllRequiredCharacters(word, constraints.acceptedChars),
   )
 
-  // Filter words with correct known positions
+  // 2. Must have correct letters in known positions
   const wordsWithCorrectPositions = wordsWithAllCharacters.filter(word =>
     hasCorrectKnownPositions(word, constraints.knownPositions),
   )
 
-  // Filter words with valid rejected positions
+  // 3. Must not have rejected letters in specific positions
   const wordsWithValidPositions = wordsWithCorrectPositions.filter(word =>
     hasValidRejectedPositions(word, constraints.rejectedPositions),
   )
 
-  // If spellchecker is provided, filter valid words
+  // 4. Validate against dictionary if spellchecker provided
   let validWords = wordsWithValidPositions
   if (spellchecker) {
     validWords = wordsWithValidPositions.filter(word =>

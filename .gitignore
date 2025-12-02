@@ -36,8 +36,8 @@ lerna-debug.log*
 # TypeScript
 *.tsbuildinfo
 
-# Vite
-.vite/
+# Compiled JavaScript (keep source TypeScript files)
+src/**/*.js
 
 
 

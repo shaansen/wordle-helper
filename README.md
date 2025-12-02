@@ -1,65 +1,23 @@
 # Wordle Solver
 
-An efficient TypeScript-based Wordle solver with an interactive React UI that learns from your guesses in real-time.
+A command-line Wordle solver built with TypeScript that helps you find valid words based on game constraints.
 
 ## Features
 
-- **Interactive React UI**: Play Wordle with a beautiful, modern interface
-- **Real-time Learning**: Mark letters as grey, yellow, or green and the solver updates instantly
-- **Smart Suggestions**: Get word suggestions based on your current constraints
-- **Efficient Algorithm**: Uses constraint-based filtering to find valid solutions
-- **Type Safety**: Full TypeScript implementation with proper interfaces and types
-- **Modular Design**: Clean separation of concerns with a dedicated `WordleSolver` class
+- **Constraint-Based Solving**: Configure accepted/denied letters and position constraints
+- **Dictionary Validation**: Uses Hunspell spellchecker to validate words
+- **Type-Safe**: Full TypeScript implementation with proper interfaces
+- **Easy Configuration**: Simply edit the constraints in `src/index.ts` and run
 
 ## How It Works
 
-The solver uses a more efficient approach than brute force:
+The solver generates all possible 5-letter combinations from allowed characters, then filters them through multiple constraint checks:
 
-1. **Constraint-Based Generation**: Instead of generating all possible 5-letter combinations, it builds words character by character while checking constraints early
-2. **Early Termination**: Stops building a word as soon as it can't satisfy the remaining constraints
-3. **Spell Checking**: Validates generated words against a dictionary to ensure they're real words
-
-## Usage
-
-```typescript
-const constraints: WordleConstraints = {
-  acceptedChars: ['u', 'n', 'i'], // Characters that must be in the word
-  deniedChars: [
-    'q',
-    'w',
-    'e',
-    'r',
-    't',
-    'y',
-    'o',
-    'p',
-    'a',
-    's',
-    'g',
-    'c',
-    'v',
-  ], // Characters not in the word
-  knownPositions: {}, // Known character positions (1-indexed)
-  rejectedPositions: {
-    // Characters that can't be in specific positions
-    2: ['u', 'i'],
-    3: ['n', 'i'],
-    5: ['n'],
-  },
-}
-
-const solver = new WordleSolver(constraints, spellchecker)
-const validWords = solver.findValidWords()
-```
-
-## Performance Improvements
-
-Compared to the original implementation:
-
-- **Memory Efficiency**: No longer stores all possible combinations in memory
-- **Speed**: Early termination reduces computation by orders of magnitude
-- **Readability**: Clear class structure and method names
-- **Maintainability**: Better error handling and type safety
+1. **Accepted Characters**: Word must contain all required letters
+2. **Denied Characters**: Word cannot contain excluded letters
+3. **Known Positions**: Letters in specific positions (green tiles)
+4. **Rejected Positions**: Letters that can't be in specific positions (yellow/grey tiles)
+5. **Dictionary Validation**: Final check against English dictionary
 
 ## Requirements
 
@@ -67,35 +25,43 @@ Compared to the original implementation:
 - TypeScript
 - Dictionary files (`en_EN.aff` and `en_EN.dic`) in the `src` directory
 
-## Running
-
-### React UI (Recommended)
-
-To run the interactive Wordle solver UI:
+## Installation
 
 ```bash
 npm install
-npm run dev:react
 ```
 
-Then open your browser to `http://localhost:3000`
+## Usage
 
-**How to use:**
+1. **Configure your Wordle constraints** in `src/index.ts`:
 
-1. Type a 5-letter word guess in the input field and press Enter
-2. Click on each letter cell to cycle through states:
-   - **Grey**: Letter is not in the word
-   - **Yellow**: Letter is in the word but in the wrong position
-   - **Green**: Letter is in the correct position
-3. The suggestions panel will update automatically as you mark letters
-4. Use the Reset button to start over
+```typescript
+// Letters that must be in the word
+const ACCEPTED_CHARS: string[] = 'cat'.split('')
 
-### Command Line Solver
+// Letters that are not in the word
+const DENIED_CHARS: string[] = 'rneslohy'.split('')
 
-To run the original command-line solver:
+// Known letter positions (1-indexed)
+const knownCharacterPositions: Record<number, string> = {
+  1: 'c', // First letter is 'c'
+  2: 'a', // Second letter is 'a'
+  4: 't', // Fourth letter is 't'
+}
+
+// Letters that cannot be in specific positions
+const knownCharacterRejectedPositions: Record<number, string[]> = {
+  3: ['a'], // 'a' cannot be in position 3
+}
+```
+
+2. **Run the solver**:
 
 ```bash
-npm install
+# Development mode (with auto-reload)
+npm run dev
+
+# Or build and run
 npm run build
 node src/index.js
 ```
@@ -103,8 +69,7 @@ node src/index.js
 ## Example Output
 
 ```
-Initializing Wordle solver...
-Finding valid words...
+Generating word combinations...
 
 Found 3 valid words:
   → unbid
@@ -112,36 +77,21 @@ Found 3 valid words:
   → unfix
 ```
 
-## Deploying to GitHub Pages
+## Project Structure
 
-This app is configured for automatic deployment to GitHub Pages!
+```
+src/
+  ├── index.ts              # Main entry point with configuration
+  ├── services/
+  │   └── spellcheckService.ts  # Dictionary and word generation logic
+  ├── utils/
+  │   └── wordConstraints.ts    # Constraint validation functions
+  ├── en_EN.aff             # Dictionary affix file
+  └── en_EN.dic             # Dictionary word list
+```
 
-### Quick Deploy
+## License
 
-1. **Push to GitHub:**
+This project is licensed under MIT License with non-commercial use restrictions. See [LICENSE](./LICENSE) for details.
 
-   ```bash
-   git add .
-   git commit -m "Deploy Wordle Solver"
-   git push origin main
-   ```
-
-2. **Enable GitHub Pages:**
-
-   - Go to your repository → **Settings** → **Pages**
-   - Under **Source**, select **GitHub Actions**
-   - Save
-
-3. **Automatic Deployment:**
-   - GitHub Actions will automatically build and deploy
-   - Check the **Actions** tab for deployment status
-   - Your site will be live at: `https://yourusername.github.io/wordle/`
-
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions.
-
-## Live Demo
-
-Once deployed, your Wordle Solver will be available at:
-
-- `https://yourusername.github.io/wordle/` (if repo is named "wordle")
-- Or your custom domain if configured
+**Note**: WORDLE is a registered trademark of The New York Times Company. This solver is not affiliated with, endorsed by, or sponsored by The New York Times Company.
