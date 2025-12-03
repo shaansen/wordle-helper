@@ -106,3 +106,4 @@ export function parseConstraintsFromQuery(query: any): WordConstraints {
 
   return constraints
 }
+
