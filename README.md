@@ -1,13 +1,14 @@
 # Wordle Solver
 
-A command-line Wordle solver built with TypeScript that helps you find valid words based on game constraints.
+A command-line Wordle solver and REST API built with TypeScript that helps you find valid words based on game constraints.
 
 ## Features
 
 - **Constraint-Based Solving**: Configure accepted/denied letters and position constraints
 - **Dictionary Validation**: Uses Hunspell spellchecker to validate words
+- **REST API**: HTTP endpoints for programmatic access
 - **Type-Safe**: Full TypeScript implementation with proper interfaces
-- **Easy Configuration**: Simply edit the constraints in `src/index.ts` and run
+- **Easy Configuration**: CLI mode - edit constraints in `src/index.ts` and run
 
 ## How It Works
 
@@ -32,6 +33,114 @@ npm install
 ```
 
 ## Usage
+
+### REST API (Recommended)
+
+Start the API server:
+
+```bash
+# Development mode (with auto-reload)
+npm run dev:api
+
+# Production mode
+npm run start:api
+```
+
+The server will start on `http://localhost:3000` (or the port specified in `PORT` environment variable).
+
+#### API Endpoints
+
+##### `GET /health`
+Health check endpoint.
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "message": "Wordle Solver API is running"
+}
+```
+
+##### `POST /api/solve`
+Solve Wordle with constraints provided in the request body.
+
+**Request Body:**
+```json
+{
+  "acceptedChars": ["c", "a", "t"],
+  "deniedChars": ["r", "n", "e", "s", "l", "o", "h", "y"],
+  "knownPositions": {
+    "1": "c",
+    "2": "a",
+    "4": "t"
+  },
+  "rejectedPositions": {
+    "3": ["a"]
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "count": 3,
+  "words": ["unbid", "undid", "unfix"],
+  "constraints": {
+    "acceptedChars": ["c", "a", "t"],
+    "deniedChars": ["r", "n", "e", "s", "l", "o", "h", "y"],
+    "knownPositions": { "1": "c", "2": "a", "4": "t" },
+    "rejectedPositions": { "3": ["a"] }
+  }
+}
+```
+
+##### `GET /api/solve`
+Alternative endpoint using query parameters.
+
+**Query Parameters:**
+- `acceptedChars`: Comma-separated letters (e.g., `c,a,t`)
+- `deniedChars`: Comma-separated letters (e.g., `r,n,e`)
+- `knownPositions`: JSON string (e.g., `{"1":"c","2":"a"}`)
+- `rejectedPositions`: JSON string (e.g., `{"3":["a"]}`)
+
+**Example:**
+```
+GET /api/solve?acceptedChars=c,a,t&deniedChars=r,n,e&knownPositions={"1":"c","2":"a"}&rejectedPositions={"3":["a"]}
+```
+
+#### Example API Usage
+
+**Using cURL:**
+```bash
+curl -X POST http://localhost:3000/api/solve \
+  -H "Content-Type: application/json" \
+  -d '{
+    "acceptedChars": ["c", "a", "t"],
+    "deniedChars": ["r", "n", "e"],
+    "knownPositions": {"1": "c", "2": "a"},
+    "rejectedPositions": {"3": ["a"]}
+  }'
+```
+
+**Using JavaScript/TypeScript:**
+```typescript
+const response = await fetch('http://localhost:3000/api/solve', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    acceptedChars: ['c', 'a', 't'],
+    deniedChars: ['r', 'n', 'e'],
+    knownPositions: { 1: 'c', 2: 'a' },
+    rejectedPositions: { 3: ['a'] }
+  })
+})
+
+const result = await response.json()
+console.log(result.words) // ['unbid', 'undid', 'unfix']
+```
+
+### Command Line Interface
 
 1. **Configure your Wordle constraints** in `src/index.ts`:
 
@@ -81,13 +190,31 @@ Found 3 valid words:
 
 ```
 src/
-  ├── index.ts              # Main entry point with configuration
+  ├── index.ts              # CLI entry point with configuration
+  ├── server.ts              # REST API server
   ├── services/
   │   └── spellcheckService.ts  # Dictionary and word generation logic
   ├── utils/
   │   └── wordConstraints.ts    # Constraint validation functions
   ├── en_EN.aff             # Dictionary affix file
   └── en_EN.dic             # Dictionary word list
+```
+
+## API Error Handling
+
+The API returns appropriate HTTP status codes:
+
+- `200 OK`: Successful request
+- `400 Bad Request`: Invalid request body or parameters
+- `404 Not Found`: Endpoint does not exist
+- `500 Internal Server Error`: Server error during processing
+
+Error responses follow this format:
+```json
+{
+  "error": "Error type",
+  "message": "Detailed error message"
+}
 ```
 
 ## License
