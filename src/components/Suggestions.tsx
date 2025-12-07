@@ -45,7 +45,9 @@ export default function Suggestions({
 
       {!loading && !error && suggestions.length === 0 && (
         <div className="text-center py-12 text-gray-500">
-          <p className="text-lg">Enter your guesses and mark letter states to see suggestions</p>
+          <p className="text-lg">
+            Enter your guesses and mark letter states to see suggestions
+          </p>
         </div>
       )}
 

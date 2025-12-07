@@ -143,7 +143,9 @@ function App() {
             <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent mb-3 drop-shadow-lg">
               Wordle Solver
             </h1>
-            <p className="text-gray-600 text-lg">Enter your guesses and mark letter states</p>
+            <p className="text-gray-600 text-lg">
+              Enter your guesses and mark letter states
+            </p>
           </header>
 
           <div className="mb-8">
@@ -155,7 +157,11 @@ function App() {
             />
           </div>
 
-          <Suggestions suggestions={suggestions} loading={loading} error={error} />
+          <Suggestions
+            suggestions={suggestions}
+            loading={loading}
+            error={error}
+          />
         </div>
       </div>
     </div>
