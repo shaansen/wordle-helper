@@ -14,3 +14,4 @@ describe('requestParser', () => {
     expect(result?.acceptedChars).toEqual(['a'])
   })
 })
+

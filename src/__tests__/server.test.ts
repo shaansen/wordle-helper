@@ -36,3 +36,4 @@ describe('API', () => {
     expect(response.body.success).toBe(true)
   })
 })
+

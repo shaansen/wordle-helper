@@ -29,3 +29,4 @@ describe('solver', () => {
     expect(result.words).toEqual(['tests'])
   })
 })
+

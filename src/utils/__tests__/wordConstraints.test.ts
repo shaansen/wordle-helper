@@ -11,3 +11,4 @@ describe('wordConstraints', () => {
     expect(hasValidRejectedPositions('hello', { 1: ['x'] })).toBe(true)
   })
 })
+

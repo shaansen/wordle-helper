@@ -5,6 +5,7 @@ import {
   parseConstraintsFromBody,
   parseConstraintsFromQuery,
 } from './utils/requestParser'
+import { join } from 'path'
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -67,6 +68,10 @@ app.get('/api/solve', async (req: Request, res: Response) => {
   }
 })
 
+app.get('/playground', (_req: Request, res: Response) => {
+  res.sendFile(join(__dirname, '..', 'playground.html'))
+})
+
 app.use(
   (err: Error, _req: Request, res: Response, _next: express.NextFunction) => {
     console.error('Unhandled error:', err)
@@ -91,6 +96,7 @@ function startServer() {
       console.log(`Wordle Solver API server running on port ${PORT}`)
       console.log(`Health check: http://localhost:${PORT}/health`)
       console.log(`API endpoint: http://localhost:${PORT}/api/solve`)
+      console.log(`Playground: http://localhost:${PORT}/playground`)
     })
   } catch (error) {
     console.error('Failed to start server:', error)
