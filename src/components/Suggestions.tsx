@@ -15,7 +15,26 @@ export default function Suggestions({
 
   const copyToClipboard = async (word: string, index: number) => {
     try {
-      await navigator.clipboard.writeText(word)
+      // Use modern Clipboard API with fallback for older browsers
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(word)
+      } else {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea')
+        textArea.value = word
+        textArea.style.position = 'fixed'
+        textArea.style.left = '-999999px'
+        textArea.style.top = '-999999px'
+        document.body.appendChild(textArea)
+        textArea.focus()
+        textArea.select()
+        try {
+          document.execCommand('copy')
+        } catch (err) {
+          console.error('Fallback copy failed:', err)
+        }
+        document.body.removeChild(textArea)
+      }
       setCopiedIndex(index)
       setTimeout(() => setCopiedIndex(null), 1000)
     } catch (err) {
@@ -56,14 +75,19 @@ export default function Suggestions({
           {suggestions.map((word, index) => (
             <div
               key={index}
-              className={`p-4 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 border-2 rounded-xl text-center text-lg font-bold uppercase cursor-pointer transition-all duration-200 active:scale-95 min-h-[52px] flex items-center justify-center backdrop-blur-sm ${
+              className={`p-4 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 border-2 rounded-xl text-center text-lg font-bold uppercase cursor-pointer transition-all duration-200 active:scale-95 min-h-[52px] flex items-center justify-center backdrop-blur-sm touch-manipulation ${
                 copiedIndex === index
                   ? 'bg-gradient-to-br from-green-400 to-green-500 text-white border-green-600 shadow-lg scale-105'
                   : 'hover:from-blue-200 hover:via-purple-200 hover:to-pink-200 hover:shadow-lg hover:scale-105 border-purple-200'
               }`}
               onClick={() => copyToClipboard(word, index)}
+              onTouchStart={e => {
+                // Prevent double-tap zoom on iOS
+                e.preventDefault()
+              }}
               onTouchEnd={e => {
                 e.preventDefault()
+                e.stopPropagation()
                 copyToClipboard(word, index)
               }}
             >

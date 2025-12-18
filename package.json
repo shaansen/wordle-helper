@@ -21,13 +21,10 @@
     "@types/express": "^5.0.6",
     "@types/hunspell-spellchecker": "^1.0.2",
     "@types/jest": "^30.0.0",
-    "@types/lodash": "^4.17.17",
     "@types/node": "^24.0.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@types/supertest": "^6.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.34.0",
-    "@typescript-eslint/parser": "^8.34.0",
     "@vitejs/plugin-react": "^4.7.0",
     "autoprefixer": "^10.4.22",
     "eslint": "^9.29.0",
@@ -47,11 +44,8 @@
     "vite": "^6.4.1"
   },
   "dependencies": {
-    "dictionary-en": "^4.0.0",
-    "en-dictionary": "^2.0.3",
     "express": "^5.2.1",
     "hunspell-spellchecker": "^1.0.2",
-    "lodash": "^4.17.21",
     "react": "^19.2.1",
     "react-dom": "^19.2.1"
   }

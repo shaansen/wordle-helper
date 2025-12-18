@@ -101,12 +101,17 @@ export default function WordleGrid({
               return (
                 <div
                   key={key}
-                  className={`w-14 h-14 sm:w-16 sm:h-16 border-4 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 hover:shadow-xl ${getStateClass(
+                  className={`w-14 h-14 sm:w-16 sm:h-16 border-4 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 hover:shadow-xl active:scale-95 touch-manipulation ${getStateClass(
                     state,
                   )}`}
                   onClick={() => cycleCellState(guessIndex, letterIndex)}
+                  onTouchStart={e => {
+                    // Prevent double-tap zoom on iOS
+                    e.preventDefault()
+                  }}
                   onTouchEnd={e => {
                     e.preventDefault()
+                    e.stopPropagation()
                     cycleCellState(guessIndex, letterIndex)
                   }}
                 >
@@ -115,15 +120,25 @@ export default function WordleGrid({
                       inputRefs.current[key] = el
                     }}
                     type="text"
+                    inputMode="text"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck="false"
                     maxLength={1}
                     value={letter.toUpperCase()}
                     placeholder=""
-                    className="w-full h-full bg-transparent border-none text-center text-2xl sm:text-3xl font-bold uppercase text-inherit focus:outline-none cursor-pointer pointer-events-auto"
+                    className="w-full h-full bg-transparent border-none text-center text-2xl sm:text-3xl font-bold uppercase text-inherit focus:outline-none cursor-pointer pointer-events-auto touch-manipulation"
                     onChange={e =>
                       handleLetterInput(guessIndex, letterIndex, e.target.value)
                     }
                     onKeyDown={e => handleKeyDown(e, guessIndex, letterIndex)}
-                    onFocus={e => e.target.select()}
+                    onFocus={e => {
+                      // Select text on mobile
+                      if (e.target instanceof HTMLInputElement) {
+                        e.target.select()
+                      }
+                    }}
                   />
                 </div>
               )
@@ -135,13 +150,13 @@ export default function WordleGrid({
       <div className="flex gap-3 justify-center flex-wrap">
         <button
           onClick={onAddGuess}
-          className="px-6 py-3 bg-gradient-to-r from-pink-400 to-purple-500 text-white rounded-xl font-semibold hover:from-pink-500 hover:to-purple-600 active:scale-95 transition-all duration-200 shadow-lg hover:shadow-xl min-h-[48px]"
+          className="px-6 py-3 bg-gradient-to-r from-pink-400 to-purple-500 text-white rounded-xl font-semibold hover:from-pink-500 hover:to-purple-600 active:scale-95 transition-all duration-200 shadow-lg hover:shadow-xl min-h-[48px] touch-manipulation"
         >
           Add Guess
         </button>
         <button
           onClick={onReset}
-          className="px-6 py-3 bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-xl font-semibold hover:from-gray-500 hover:to-gray-600 active:scale-95 transition-all duration-200 shadow-lg hover:shadow-xl min-h-[48px]"
+          className="px-6 py-3 bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-xl font-semibold hover:from-gray-500 hover:to-gray-600 active:scale-95 transition-all duration-200 shadow-lg hover:shadow-xl min-h-[48px] touch-manipulation"
         >
           Reset
         </button>

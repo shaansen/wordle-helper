@@ -17,7 +17,7 @@ function App() {
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const solveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const solveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const buildConstraints = useCallback(() => {
     const acceptedChars = new Set<string>()
@@ -136,8 +136,8 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-200 via-purple-200 to-indigo-300 bg-fixed">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="min-h-screen bg-gradient-to-br from-pink-200 via-purple-200 to-indigo-300 bg-fixed safe-area-inset">
+      <div className="container mx-auto px-4 py-4 sm:py-8 max-w-4xl">
         <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-6 md:p-8 border-2 border-white/50">
           <header className="text-center mb-8">
             <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent mb-3 drop-shadow-lg">
