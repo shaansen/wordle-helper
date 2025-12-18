@@ -88,6 +88,31 @@ export default function WordleGrid({
     onUpdateGuess(guessIndex, guess.word, newStates)
   }
 
+  const handleCellClick = (
+    e: React.MouseEvent | React.TouchEvent,
+    guessIndex: number,
+    letterIndex: number,
+  ) => {
+    // If clicking directly on the input, don't cycle state
+    if (
+      e.target instanceof HTMLInputElement ||
+      (e.target as HTMLElement).tagName === 'INPUT'
+    ) {
+      return
+    }
+
+    const guess = guesses[guessIndex]
+    // If cell is empty, focus the input instead of cycling
+    if (!guess.word[letterIndex]) {
+      const key = `${guessIndex}-${letterIndex}`
+      inputRefs.current[key]?.focus()
+      return
+    }
+
+    // If cell has a letter, cycle the state
+    cycleCellState(guessIndex, letterIndex)
+  }
+
   return (
     <div>
       <div className="space-y-3 mb-6">
@@ -104,15 +129,10 @@ export default function WordleGrid({
                   className={`w-14 h-14 sm:w-16 sm:h-16 border-4 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 hover:shadow-xl active:scale-95 touch-manipulation ${getStateClass(
                     state,
                   )}`}
-                  onClick={() => cycleCellState(guessIndex, letterIndex)}
-                  onTouchStart={e => {
-                    // Prevent double-tap zoom on iOS
-                    e.preventDefault()
-                  }}
+                  onClick={e => handleCellClick(e, guessIndex, letterIndex)}
                   onTouchEnd={e => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    cycleCellState(guessIndex, letterIndex)
+                    // Don't prevent default - let the input focus naturally
+                    handleCellClick(e, guessIndex, letterIndex)
                   }}
                 >
                   <input
@@ -128,7 +148,7 @@ export default function WordleGrid({
                     maxLength={1}
                     value={letter.toUpperCase()}
                     placeholder=""
-                    className="w-full h-full bg-transparent border-none text-center text-2xl sm:text-3xl font-bold uppercase text-inherit focus:outline-none cursor-pointer pointer-events-auto touch-manipulation"
+                    className="w-full h-full bg-transparent border-none text-center text-2xl sm:text-3xl font-bold uppercase text-inherit focus:outline-none cursor-text pointer-events-auto touch-manipulation"
                     onChange={e =>
                       handleLetterInput(guessIndex, letterIndex, e.target.value)
                     }
@@ -138,6 +158,14 @@ export default function WordleGrid({
                       if (e.target instanceof HTMLInputElement) {
                         e.target.select()
                       }
+                    }}
+                    onClick={e => {
+                      // Stop propagation so clicking input doesn't trigger cell click
+                      e.stopPropagation()
+                    }}
+                    onTouchStart={e => {
+                      // Stop propagation so touching input doesn't trigger cell touch
+                      e.stopPropagation()
                     }}
                   />
                 </div>
