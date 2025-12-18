@@ -136,14 +136,12 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-200 via-purple-200 to-indigo-300 bg-fixed safe-area-inset">
+    <div className="bg-app">
       <div className="container mx-auto px-4 py-4 sm:py-8 max-w-4xl">
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-6 md:p-8 border-2 border-white/50">
+        <div className="card">
           <header className="text-center mb-8">
-            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent mb-3 drop-shadow-lg">
-              Wordle Solver
-            </h1>
-            <p className="text-gray-600 text-lg">
+            <h1 className="heading-primary">Wordle Solver</h1>
+            <p className="text-subtitle">
               Enter your guesses and mark letter states
             </p>
           </header>

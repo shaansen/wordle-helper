@@ -19,13 +19,13 @@ export default function WordleGrid({
   const getStateClass = (state: LetterState): string => {
     switch (state) {
       case 'grey':
-        return 'bg-gradient-to-br from-gray-300 to-gray-400 text-white border-gray-500 shadow-lg'
+        return 'state-grey'
       case 'yellow':
-        return 'bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-500 text-white border-yellow-600 shadow-lg'
+        return 'state-yellow'
       case 'green':
-        return 'bg-gradient-to-br from-green-400 via-green-500 to-green-600 text-white border-green-700 shadow-lg'
+        return 'state-green'
       default:
-        return 'bg-white/60 border-gray-300 text-gray-700 backdrop-blur-sm'
+        return 'state-empty'
     }
   }
 
@@ -126,9 +126,7 @@ export default function WordleGrid({
               return (
                 <div
                   key={key}
-                  className={`w-14 h-14 sm:w-16 sm:h-16 border-4 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 hover:shadow-xl active:scale-95 touch-manipulation ${getStateClass(
-                    state,
-                  )}`}
+                  className={`card-cell ${getStateClass(state)}`}
                   onClick={e => handleCellClick(e, guessIndex, letterIndex)}
                   onTouchEnd={e => {
                     // Don't prevent default - let the input focus naturally
@@ -148,7 +146,7 @@ export default function WordleGrid({
                     maxLength={1}
                     value={letter.toUpperCase()}
                     placeholder=""
-                    className="w-full h-full bg-transparent border-none text-center text-2xl sm:text-3xl font-bold uppercase text-inherit focus:outline-none cursor-text pointer-events-auto touch-manipulation"
+                    className="input-cell"
                     onChange={e =>
                       handleLetterInput(guessIndex, letterIndex, e.target.value)
                     }
@@ -176,16 +174,10 @@ export default function WordleGrid({
       </div>
 
       <div className="flex gap-3 justify-center flex-wrap">
-        <button
-          onClick={onAddGuess}
-          className="px-6 py-3 bg-gradient-to-r from-pink-400 to-purple-500 text-white rounded-xl font-semibold hover:from-pink-500 hover:to-purple-600 active:scale-95 transition-all duration-200 shadow-lg hover:shadow-xl min-h-[48px] touch-manipulation"
-        >
+        <button onClick={onAddGuess} className="btn-primary">
           Add Guess
         </button>
-        <button
-          onClick={onReset}
-          className="px-6 py-3 bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-xl font-semibold hover:from-gray-500 hover:to-gray-600 active:scale-95 transition-all duration-200 shadow-lg hover:shadow-xl min-h-[48px] touch-manipulation"
-        >
+        <button onClick={onReset} className="btn-secondary">
           Reset
         </button>
       </div>
