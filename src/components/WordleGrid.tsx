@@ -93,16 +93,9 @@ export default function WordleGrid({
     guessIndex: number,
     letterIndex: number,
   ) => {
-    // If clicking directly on the input, don't cycle state
-    if (
-      e.target instanceof HTMLInputElement ||
-      (e.target as HTMLElement).tagName === 'INPUT'
-    ) {
-      return
-    }
-
     const guess = guesses[guessIndex]
-    // If cell is empty, focus the input instead of cycling
+    
+    // If cell is empty, focus the input
     if (!guess.word[letterIndex]) {
       const key = `${guessIndex}-${letterIndex}`
       inputRefs.current[key]?.focus()
@@ -158,12 +151,32 @@ export default function WordleGrid({
                       }
                     }}
                     onClick={e => {
-                      // Stop propagation so clicking input doesn't trigger cell click
-                      e.stopPropagation()
+                      const guess = guesses[guessIndex]
+                      // If there's a letter, cycle state instead of focusing
+                      if (guess.word[letterIndex]) {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        // Blur the input if it was focused
+                        if (e.target instanceof HTMLInputElement) {
+                          e.target.blur()
+                        }
+                        cycleCellState(guessIndex, letterIndex)
+                      }
+                      // If empty, let it focus naturally (don't stop propagation)
                     }}
-                    onTouchStart={e => {
-                      // Stop propagation so touching input doesn't trigger cell touch
-                      e.stopPropagation()
+                    onTouchEnd={e => {
+                      const guess = guesses[guessIndex]
+                      // If there's a letter, cycle state on touch
+                      if (guess.word[letterIndex]) {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        // Blur the input if it was focused
+                        if (e.target instanceof HTMLInputElement) {
+                          e.target.blur()
+                        }
+                        cycleCellState(guessIndex, letterIndex)
+                      }
+                      // If empty, let it focus naturally
                     }}
                   />
                 </div>

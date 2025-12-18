@@ -74,9 +74,7 @@ export default function Suggestions({
             <div
               key={index}
               className={`card-suggestion ${
-                copiedIndex === index
-                  ? 'state-copied'
-                  : 'suggestion-default'
+                copiedIndex === index ? 'state-copied' : 'suggestion-default'
               }`}
               onClick={() => copyToClipboard(word, index)}
               onTouchStart={e => {
