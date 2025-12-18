@@ -94,7 +94,7 @@ export default function WordleGrid({
     letterIndex: number,
   ) => {
     const guess = guesses[guessIndex]
-    
+
     // If cell is empty, focus the input
     if (!guess.word[letterIndex]) {
       const key = `${guessIndex}-${letterIndex}`
